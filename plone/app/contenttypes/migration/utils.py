@@ -154,19 +154,3 @@ def _checkForExtenderInterfaces(interface):
             fields = getattr(adapter.factory(None), 'fields', [])
             return [field.getName() for field in fields]
     return []
-
-
-def installTypeIfNeeded(type_name):
-    """Make sure the dexterity-fti is already installed.
-    If not we run a step that only installs the types fti.
-    """
-    portal = getSite()
-    tt = getToolByName(portal, 'portal_types')
-    fti = tt.getTypeInfo(type_name)
-    if IDexterityFTI.providedBy(fti):
-        return
-    ps = getToolByName(portal, 'portal_setup')
-    profile_name = type_name.lower().replace('_', '')
-    ps.runAllImportStepsFromProfile(
-        'profile-plone.app.contenttypes:%s' % profile_name
-    )

@@ -10,7 +10,6 @@ from Products.statusmessages.interfaces import IStatusMessage
 from datetime import datetime
 from plone.app.contenttypes.migration import migration
 from plone.app.contenttypes.migration.utils import ATCT_LIST
-from plone.app.contenttypes.migration.utils import installTypeIfNeeded
 from plone.app.contenttypes.migration.utils import isSchemaExtended
 from plone.browserlayer.interfaces import ILocalBrowserLayerType
 from plone.dexterity.content import DexterityContent
@@ -143,7 +142,6 @@ class MigrateFromATContentTypes(BrowserView):
                 "Migrating %s objects of type %s" %
                 (amount_to_be_migrated, k)
             )
-            installTypeIfNeeded(v['new_type_name'])
             # call the migrator
             v['migrator'](portal)
 
@@ -383,40 +381,21 @@ class PACInstaller(form.Form):
 
     @button.buttonAndHandler(_(u'Install'), name='install')
     def handle_install(self, action):
-        """ install p.a.c's core-profile (no fti's).
-        This way the AT-fti's are still valid.
+        """ install p.a.c
         """
         url = self.context.absolute_url()
         qi = getToolByName(self.context, "portal_quickinstaller")
         fail = qi.installProduct(
             'plone.app.contenttypes',
-            profile='plone.app.contenttypes:core',
+            profile='plone.app.contenttypes:default',
         )
         if fail:
             messages = IStatusMessage(self.request)
             messages.addStatusMessage(fail, type='error')
             self.request.response.redirect(url)
-        # For types without any instances we want to instantly
-        # replace the AT-FTI's with DX-FTI's.
-        self.installTypesWithoutItems()
 
         url = url + '/@@atct_migrator'
         self.request.response.redirect(url)
-
-    def installTypesWithoutItems(self):
-        catalog = getToolByName(self.context, "portal_catalog")
-        for types_name in [
-            'Event',
-            'Collection',
-            'Document',
-            'File',
-            'Folder',
-            'Image',
-            'Link',
-            'News Item',
-        ]:
-            if not catalog.unrestrictedSearchResults(portal_type=types_name):
-                installTypeIfNeeded(types_name)
 
     @button.buttonAndHandler(
         _(u'label_cancel', default=u'Cancel'), name='cancel')
