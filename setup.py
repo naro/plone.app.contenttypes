@@ -35,6 +35,7 @@ setup(name='plone.app.contenttypes',
           'plone.app.event [dexterity] < 1.1.999',
           'plone.app.dexterity>=2.0.7',  # has a fix for INameFromFilename
           'plone.dexterity>=2.2.1',  # behaviors can provide primaryfields
+          'plone.app.querystring >= 1.2.2',  # custom_query support
           'plone.app.relationfield',
           'plone.formwidget.querystring',
           'plone.namedfile [blobs]',

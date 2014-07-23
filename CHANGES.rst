@@ -4,6 +4,11 @@ Changelog
 1.1b3 (unreleased)
 ------------------
 
+- Support ``custom_query`` parameter in the ``result`` method of the
+  ``Collection`` behavior. This allows for run time customization of the
+  stored query, e.g. by request parameters.
+  [thet]
+
 - Remove enabling simple_publication_workflow from testing fixture.
   [timo]
 
